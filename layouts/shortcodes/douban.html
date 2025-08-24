@@ -3,7 +3,8 @@
 {{ $dbID := replaceRE `.*douban.com/subject/([0-9]+)/.*` "$1" $dbUrl }}
 
 {{ if eq $dbType "book" }}
-    {{$items := getCSV "," "data/douban/book.csv" }}
+    {{ $csv := resources.Get "data/douban/book.csv" }}
+    {{ $items := $csv | transform.Unmarshal (dict "delimiter" ",") }}
     {{range $item := $items}}
     {{if eq (index $item 5) $dbUrl }}
         {{ $rating := float (index $item 6) }}
@@ -23,7 +24,8 @@
 {{ end }}
 
 {{ if eq $dbType "movie" }}
-    {{$items := getCSV "," "data/douban/movie.csv" }}
+    {{ $csv := resources.Get "data/douban/movie.csv" }}
+    {{ $items := $csv | transform.Unmarshal (dict "delimiter" ",") }}
     {{range $item := $items}}
     {{if eq (index $item 5) $dbUrl }}
         {{ $rating := float (index $item 6)}}
